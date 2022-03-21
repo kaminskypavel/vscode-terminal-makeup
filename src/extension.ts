@@ -1,26 +1,78 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import icons from "./icons";
+import * as chalk from "chalk";
+import {sample} from "lodash";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+const debug = (...args: any[]) => console.debug(chalk.bgRed("[Terminal Makup 💄]: ", ...args));
+
 export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "terminal-makeup" is now active!');
+	const writeEmitter = new vscode.EventEmitter<string>();
+	let terminal: vscode.Terminal;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('terminal-makeup.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from terminal-makeup!');
-	});
+	context.subscriptions.push(vscode.commands.registerCommand('extensionTerminalSample.create', () => {
+		let line = '';
+		const pty = {
+			onDidWrite: writeEmitter.event,
+			open: () => writeEmitter.fire('Terminal Makeup Profile 💄 \r\n\r\n'),
+			close: () => {
+				/* noop*/
+			},
+			handleInput: (data: string) => {
+				if (data === '\r') {
+					// Enter
+					writeEmitter.fire(`\r\necho: "${colorText(line)}"\r\n\n`);
+					line = '';
+					return;
+				}
 
-	context.subscriptions.push(disposable);
+				if (data === '\x7f') {
+					// Backspace
+					if (line.length === 0) {
+						return;
+					}
+					line = line.substr(0, line.length - 1);
+					// Move cursor backward
+					writeEmitter.fire('\x1b[D');
+					// Delete character
+					writeEmitter.fire('\x1b[P');
+					return;
+				}
+				line += data;
+				writeEmitter.fire(data);
+			}
+		};
+
+
+
+
+		// const iconPath = new vscode.ThemeIcon(icons[~~Math.random() * icons.length]);
+		const iconPath = new vscode.ThemeIcon(sample(icons)!);
+
+		const color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+		debug("Creating terminal", {iconPath, color});
+
+		terminal = vscode.window.createTerminal({name: `Terminal Makeup 💄`, iconPath, color, pty});
+		terminal.show();
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('extensionTerminalSample.clear', () => {
+		writeEmitter.fire('\x1b[2J\x1b[3J\x1b[;H');
+	}));
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {}
+function colorText(text: string): string {
+	let output = '';
+	let colorIndex = 1;
+	for (let i = 0; i < text.length; i++) {
+		const char = text.charAt(i);
+		if (char === ' ' || char === '\r' || char === '\n') {
+			output += char;
+		} else {
+			output += `\x1b[3${colorIndex++}m${text.charAt(i)}\x1b[0m`;
+			if (colorIndex > 6) {
+				colorIndex = 1;
+			}
+		}
+	}
+	return output;
+}

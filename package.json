@@ -1,45 +1,57 @@
 {
-  "name": "terminal-makeup",
-	"displayName": "terminal-makeup",
-	"description": "give your terminal the makeup it need to become a perfect 10/10",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.65.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-        "onCommand:terminal-makeup.helloWorld"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "terminal-makeup.helloWorld",
-				"title": "Hello World"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.65.0",
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.0",
-		"@types/node": "14.x",
-		"@typescript-eslint/eslint-plugin": "^5.12.1",
-		"@typescript-eslint/parser": "^5.12.1",
-		"eslint": "^8.9.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.2.1",
-		"typescript": "^4.5.5",
-		"@vscode/test-electron": "^2.1.2"
-	}
+  "name": "extension-terminal-sample",
+  "displayName": "extension-terminal-sample",
+  "description": "An example usage of the extension terminal API",
+  "version": "0.0.1",
+  "publisher": "vscode-samples",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/vscode-extension-samples"
+  },
+  "engines": {
+    "vscode": "^1.37.0"
+  },
+  "enableProposedApi": true,
+  "enableProposals": true,
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:extensionTerminalSample.create",
+    "onCommand:extensionTerminalSample.clear"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extensionTerminalSample.create",
+        "title": "Extension Terminal Sample: Create"
+      },
+      {
+        "command": "extensionTerminalSample.clear",
+        "title": "Extension Terminal Sample: Clear"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.180",
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.33.0",
+    "@typescript-eslint/eslint-plugin": "^4.16.0",
+    "@typescript-eslint/parser": "^4.16.0",
+    "eslint": "^7.21.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "chalk": "^4",
+    "lodash": "^4.17.21"
+  }
 }
