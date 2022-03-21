@@ -51,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
 		debug("Creating terminal", {iconPath, color});
 
-		terminal = vscode.window.createTerminal({name: `Terminal Makeup 💄`, iconPath, color, pty});
+		terminal = vscode.window.createTerminal({name: `Terminal Makeup 💄`, iconPath, color});
 		terminal.show();
 	}));
 
